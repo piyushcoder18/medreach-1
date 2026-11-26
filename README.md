@@ -159,7 +159,7 @@ The demo fleet has **9 service areas** (Bhopal Old City / Central / South / West
 
 **Live now:** https://medreach-2.onrender.com (auto-deploys on every merge to `main`).
 
-One click: **New → Blueprint** → select this repo. [`render.yaml`](render.yaml) sets the build and start commands, the health check and all environment variables. It asks for `GEMINI_API_KEY`, `ANTHROPIC_API_KEY` and `SEHAT_DATA_KEY`. All are optional; leave them empty to run without AI.
+One click: **New → Blueprint** → select this repo. [`netlify.toml`](netlify.toml) sets the build and start commands, the health check and all environment variables. It asks for `GEMINI_API_KEY`, `ANTHROPIC_API_KEY` and `SEHAT_DATA_KEY`. All are optional; leave them empty to run without AI.
 
 **Turn on Gemini:** get a free key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey) → Render → your service → **Environment** → add `GEMINI_API_KEY` → **Save, rebuild and deploy**. The start-up log then shows `Generative AI: Gemini (gemini-2.5-flash)`. Also add `SEHAT_DATA_KEY` (any 64 hex characters, e.g. from `openssl rand -hex 32`).
 Manual: **New → Web Service** with build command `npm ci`, start command `npm start`, health check `/api/config`, plus the variables in `render.yaml`. Render provides `PORT` itself.
