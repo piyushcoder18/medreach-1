@@ -1,0 +1,15 @@
+# Medreach on Netlify
+#
+# The app is a plain Express server (server/index.js) with no frontend build step.
+# The build gathers everything the browser loads into dist/ so the CDN serves it:
+#   public/                      → /
+#   shared/                      → /shared/        (ES modules imported by the pages)
+#   node_modules/leaflet/dist    → /vendor/leaflet (map library, self-hosted)
+# The API (/api/*) runs on a Netlify Server, see netlify/server/index.mjs.
+[build]
+  command = "rm -rf dist && mkdir -p dist/vendor && cp -R public/. dist/ && cp -R shared dist/shared && cp -R node_modules/leaflet/dist dist/vendor/leaflet"
+  publish = "dist"
+
+[build.environment]
+  # Netlify Server needs Node.js 24+ (package.json only requires >=20).
+  NODE_VERSION = "24"

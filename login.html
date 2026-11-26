@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Medreach – Sign in</title>
+  <meta name="description" content="Sign in to the Medreach citizen portal or the hospital staff portal.">
+  <meta name="theme-color" content="#0b1427">
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/ui.css">
+</head>
+<body class="ui">
+  <div class="auth-bg">
+    <a class="auth-brand" href="/">
+      <img src="/icons/icon.svg" alt="">
+      <span><b>MEDREACH</b><small>RIGHT HOSPITAL · RIGHT NOW</small></span>
+    </a>
+
+    <div class="auth-card">
+      <h1 id="title">Sign in</h1>
+      <p class="lead" id="lead">Choose your portal to continue</p>
+
+      <div id="already" class="note-box hidden" style="margin-bottom:1rem"></div>
+
+      <div class="role-head"><span>Select your role <b>*</b></span><code id="roleCode">ROLE: CITIZEN</code></div>
+      <div class="roles" role="radiogroup" aria-label="Role">
+        <button type="button" class="role-card" role="radio" data-role="citizen" aria-checked="true">
+          <span class="r-ico"><i data-i="user"></i></span><b>Citizen</b><small>Patient / Family</small>
+        </button>
+        <button type="button" class="role-card" role="radio" data-role="staff" aria-checked="false">
+          <span class="r-ico"><i data-i="hospital"></i></span><b>Hospital Staff</b><small>ER · Resources · Nodal</small>
+        </button>
+        <button type="button" class="role-card" role="radio" data-role="admin" aria-checked="false">
+          <span class="r-ico"><i data-i="shield"></i></span><b>Health Admin</b><small>State control room</small>
+        </button>
+      </div>
+
+      <!-- ───────── Citizen: Aadhaar + OTP ───────── -->
+      <section id="citizenBox">
+        <div class="note-box aadhaar-note"><i data-i="idcard" class="sm"></i><span>Sign in or register with <b>Aadhaar + OTP</b>. One verified account per person, so fake accounts can't be created.</span></div>
+
+        <form id="aadhaarForm" novalidate>
+          <label class="field"><span>Aadhaar number <b>*</b></span>
+            <span class="input"><i data-i="idcard" class="sm"></i><input id="aadhaar" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="XXXX XXXX XXXX" maxlength="14" required></span></label>
+          <div id="demoIds" class="hidden" style="margin:-.3rem 0 .9rem">
+            <span class="small muted">Demo Aadhaar numbers (fictional people):</span>
+            <div class="row" id="demoIdList" style="gap:.35rem;margin-top:.3rem"></div>
+          </div>
+          <label class="row small consent-row">
+            <input type="checkbox" id="aaConsent">
+            <span>I agree that Medreach verifies my Aadhaar with UIDAI using an OTP sent to my <b>Aadhaar-linked mobile</b>, only to confirm who I am. My Aadhaar number is never stored.</span>
+          </label>
+          <p class="form-error" id="aaError" role="alert"></p>
+          <button class="b primary lg block" id="aaBtn" type="submit">Send OTP to Aadhaar-linked mobile <i data-i="arrow" class="sm"></i></button>
+        </form>
+
+        <form id="aaOtpForm" class="hidden" novalidate>
+          <p class="small" id="aaSent"></p>
+          <p class="otp-demo hidden" id="aaDemo"></p>
+          <label class="field hidden" id="aaNameField"><span>Full name as printed on your Aadhaar <b>*</b></span>
+            <span class="input"><i data-i="user" class="sm"></i><input id="aaName" autocomplete="name" maxlength="60" placeholder="e.g. Prashant Kumar"></span></label>
+          <label class="field"><span>6-digit OTP <b>*</b></span>
+            <span class="input"><i data-i="shield" class="sm"></i><input id="aaOtp" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="••••••" required></span></label>
+          <p class="form-error" id="aaOtpError" role="alert"></p>
+          <button class="b primary lg block" id="aaVerifyBtn" type="submit">Verify &amp; continue <i data-i="arrow" class="sm"></i></button>
+          <p class="small muted otp-links"><a href="#" id="aaChange">Change Aadhaar number</a> · <a href="#" id="aaResend">Resend OTP</a> <span id="aaResendIn"></span></p>
+        </form>
+      </section>
+
+      <!-- ───────── Hospital staff / admin ───────── -->
+      <section id="staffBox" class="hidden">
+        <div class="note-box" style="margin-bottom:1rem"><i data-i="lock" class="sm"></i> Staff accounts are issued by the hospital / State Health Department. There's no self-registration, so nobody can pose as a hospital.</div>
+        <form id="otpReqForm" novalidate>
+          <label class="field" id="hospField"><span>Hospital ID <b>*</b></span>
+            <span class="input"><i data-i="building" class="sm"></i><select id="hospitalId" required></select></span></label>
+          <label class="field"><span>Staff ID <b>*</b></span>
+            <span class="input"><i data-i="idcard" class="sm"></i><input id="staffId" autocomplete="username" placeholder="e.g. BANSAL-ED01" required></span></label>
+          <div id="quickLogin" class="hidden" style="margin:-.3rem 0 .9rem">
+            <span class="small muted">Demo staff accounts:</span>
+            <div class="row" id="quickList" style="gap:.35rem;margin-top:.3rem"></div>
+          </div>
+          <button class="b primary lg block" id="otpBtn" type="submit">Send OTP <i data-i="arrow" class="sm"></i></button>
+        </form>
+        <form id="otpForm" class="hidden" novalidate style="margin-top:1rem">
+          <p class="small" id="otpSent"></p>
+          <p class="otp-demo hidden" id="otpDemo"></p>
+          <label class="field"><span>6-digit OTP <b>*</b></span>
+            <span class="input"><i data-i="shield" class="sm"></i><input id="otp" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="••••••" required></span></label>
+          <button class="b teal lg block" type="submit">Verify &amp; open hospital dashboard <i data-i="arrow" class="sm"></i></button>
+        </form>
+        <p class="form-error" id="stError" role="alert"></p>
+      </section>
+
+      <div class="auth-foot" id="authFoot"></div>
+    </div>
+
+    <p class="privacy-line">🔒 Citizen and hospital portals are completely separate: different logins, different sessions, and neither can see the other's private data. <a href="/report">Emergency? Report without logging in →</a></p>
+  </div>
+  <script type="module" src="/js/login.js"></script>
+</body>
+</html>

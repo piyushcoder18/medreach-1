@@ -1,0 +1,53 @@
+/* Practice 108 control room console */
+.pc-head { position: sticky; top: 0; z-index: 900; background: #111827; color: #e5e7eb; border-bottom: 3px solid #f59e0b; }
+.pc-in { max-width: 1400px; margin: 0 auto; padding: .6rem clamp(16px, 3vw, 2rem); display: flex; align-items: center; gap: .9rem; flex-wrap: wrap; }
+.pc-brand { display: flex; gap: .6rem; align-items: center; color: #fff !important; }
+.pc-brand img { border-radius: 9px; }
+.pc-brand b { display: block; font-size: 1.1rem; }
+.pc-brand small { display: block; color: #9ca3af; font-size: .76rem; }
+.pc-badge { background: #f59e0b; color: #111827; font-weight: 800; font-size: .74rem; letter-spacing: .06em; padding: .25rem .6rem; border-radius: 6px; }
+.pc-live { display: inline-flex; gap: .4rem; align-items: center; font-weight: 700; font-size: .85rem; color: #fbbf24; }
+.pc-live .dot { width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+.pc-live.ok { color: #34d399; }
+.pc-main { max-width: 1400px; margin: 0 auto; padding: 1rem clamp(16px, 3vw, 2rem) 3rem; }
+.pc-note { margin-bottom: 1rem; line-height: 1.55; }
+.pc-off { padding: 1rem 1.2rem; border-radius: 12px; background: var(--amber-soft); border: 1px solid var(--line); margin-bottom: 1rem; }
+.pc-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 1rem; align-items: start; }
+.pc-map { height: 420px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.pc-key .b { margin-bottom: .4rem; }
+.pc-fleet { list-style: none; padding: 0; margin: .3rem 0 0; display: grid; gap: .3rem; }
+.pc-fleet li { display: grid; grid-template-columns: auto 1fr auto; gap: .6rem; align-items: center; font-size: .84rem; padding: .35rem 0; border-top: 1px solid var(--line); }
+.pc-incidents h2 { margin: 1.4rem 0 .7rem; }
+.pc-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: .9rem; }
+.pc-inc.closed { opacity: .65; }
+.pc-what { margin: .5rem 0; }
+.pc-alone { color: var(--red); }
+.pc-kv { display: grid; grid-template-columns: auto 1fr; gap: .25rem .8rem; font-size: .84rem; }
+.pc-kv span { color: var(--muted); }
+.pc-kv b { font-weight: 600; overflow-wrap: anywhere; }
+.pc-log { margin: .4rem 0 0; padding-left: 1.1rem; font-size: .8rem; }
+.pc-actions { margin-top: .7rem; gap: .5rem; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+@media (max-width: 900px) { .pc-grid { grid-template-columns: 1fr; } .pc-map { height: 320px; } .pc-list { grid-template-columns: 1fr; } }
+.pc-checks { margin: .6rem 0; padding-left: 1.2rem; line-height: 1.9; }
+.pc-checks code { overflow-wrap: anywhere; }
+
+.pc-show { display: flex; align-items: center; gap: .4rem; margin: -.2rem 0 .5rem; color: var(--muted, #64748b); cursor: pointer; }
+#keyState.pc-ok { color: #047857; }
+#keyState.pc-bad { color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: .5rem .6rem; }
+#keyState code { font-size: .85em; }
+
+.pc-mode { border: 1px solid var(--line, #e2e8f0); border-radius: 10px; padding: .6rem .75rem; margin: .8rem 0 .6rem; }
+.pc-mode legend { font-weight: 700; padding: 0 .3rem; }
+.pc-mode label { display: flex; gap: .5rem; align-items: flex-start; margin: .3rem 0; cursor: pointer; line-height: 1.35; }
+.pc-mode input { margin-top: .2rem; }
+.pc-mode p { margin: .3rem 0 0; }
+.pc-jump { display: block; padding: .5rem .65rem; border-radius: 8px; background: #eff6ff; color: #1d4ed8; text-decoration: none; font-size: .9rem; }
+.pc-jump:hover { background: #dbeafe; }
+
+/* Shown inside the hospital dashboard: the dashboard already has a header. */
+.pc-embed .pc-head, .pc-embed .pc-note { display: none; }
+.pc-embed .pc-main { padding-top: .75rem; }
+
+.pc-fleet { max-height: 30rem; overflow-y: auto; padding-right: .25rem; }
+.pc-fleet li.pc-area { grid-template-columns: 1fr auto; position: sticky; top: 0; background: var(--surface, #fff); border-top: 2px solid var(--line); padding-top: .55rem; z-index: 1; }

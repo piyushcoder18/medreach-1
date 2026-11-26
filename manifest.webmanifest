@@ -1,0 +1,21 @@
+{
+  "name": "Medreach – Emergency Help",
+  "short_name": "Medreach",
+  "description": "AI emergency assistant: understands the emergency, finds a hospital that can treat it right now, gets acceptance and guides you there.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f6fb",
+  "theme_color": "#0b7a75",
+  "lang": "hi-IN",
+  "categories": ["medical", "health", "government"],
+  "icons": [
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Report emergency", "url": "/report", "description": "Report an emergency – no login needed" },
+    { "name": "Citizen dashboard", "url": "/citizen", "description": "Your cases, nearby hospitals and health records" },
+    { "name": "Hospital dashboard", "url": "/hospital", "description": "Staff: referrals, beds and resources" }
+  ]
+}

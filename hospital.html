@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Medreach – Hospital Dashboard</title>
+  <meta name="description" content="Hospital emergency dashboard for authorised staff: referrals with AI pre-arrival notes, bed and resource status, duty roster, reports and audit log.">
+  <meta name="theme-color" content="#121c2f">
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="/css/ui.css">
+</head>
+<body class="ui">
+  <!-- Shown when this tab has no staff session -->
+  <div id="gate" class="auth-bg hidden">
+    <a class="auth-brand" href="/"><img src="/icons/icon.svg" alt=""><span><b>MEDREACH</b><small>HOSPITAL STAFF PORTAL</small></span></a>
+    <div class="auth-card">
+      <h1>Staff sign-in required</h1>
+      <p class="lead">This dashboard is only for authorised hospital staff. Sign in with Hospital ID + Staff ID + OTP.</p>
+      <a class="b teal lg block" href="/login?role=staff"><i data-i="login"></i> Go to staff sign-in</a>
+      <div id="demoGate" class="hidden" style="margin-top:1.2rem">
+        <div class="note-box">
+          <b>Demo quick sign-in</b> (the real OTP flow runs; the OTP is shown only because the prototype has no SMS gateway)
+          <label class="field" style="margin-top:.6rem"><span>Hospital</span><span class="input"><select id="gateHospital"></select></span></label>
+          <div class="row" id="gateRoles"></div>
+        </div>
+      </div>
+      <div class="auth-foot">Patient or family member? <a href="/login?role=citizen">Citizen sign-in</a></div>
+    </div>
+  </div>
+
+  <div class="shell hidden" id="app">
+    <aside class="side" id="side" aria-label="Hospital navigation">
+      <a class="logo" href="/"><img src="/icons/icon.svg" alt=""><span><b>Medreach</b><small>Emergency · Care · Support</small></span></a>
+      <nav class="nav" id="nav">
+        <button class="nav-item" data-view="dashboard"><i data-i="home"></i> Dashboard</button>
+        <button class="nav-item" data-view="update"><i data-i="refresh"></i> 108-min Update <span class="count hidden" id="updateDue"></span></button>
+        <button class="nav-item" data-view="cases"><i data-i="siren"></i> Emergency Cases <span class="count hidden" id="pendingCount"></span></button>
+        <button class="nav-item" data-view="queue"><i data-i="users"></i> Patient Queue</button>
+        <button class="nav-item" data-view="beds"><i data-i="bed"></i> Bed Management</button>
+        <button class="nav-item" data-view="staff"><i data-i="stethoscope"></i> Doctors &amp; Staff</button>
+        <button class="nav-item" data-view="resources"><i data-i="box"></i> Resources</button>
+        <button class="nav-item" data-view="control"><i data-i="ambulance"></i> 108 Control Room</button>
+        <button class="nav-item" data-view="reports"><i data-i="chart"></i> Reports</button>
+        <button class="nav-item" data-view="audit" id="navAudit"><i data-i="file"></i> Audit Log</button>
+        <button class="nav-item" data-view="profile"><i data-i="user"></i> Profile</button>
+        <button class="nav-item" data-view="settings"><i data-i="settings"></i> Settings</button>
+      </nav>
+      <div class="side-foot">
+        <div class="online-card"><b><span class="dot green" id="liveDot"></span> <span id="liveText">Hospital Online</span></b><span id="lastUpdated">–</span></div>
+        <button class="nav-item" id="logoutSide"><i data-i="logout"></i> Logout</button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu"><i data-i="menu"></i></button>
+        <span class="loc-pill" id="hospPill"><i data-i="building" class="sm"></i><span id="hospName">–</span></span>
+        <span class="input hidden" id="adminPick" style="min-height:40px"><i data-i="building" class="sm"></i><select id="adminHospital" aria-label="Hospital (admin view)"></select></span>
+        <span class="spacer"></span>
+        <span class="pill gray" id="clock"></span>
+        <button class="icon-btn" id="bellBtn" aria-label="Pending referrals"><i data-i="bell"></i><span class="badge-dot hidden" id="bellCount"></span></button>
+        <button class="user-chip" id="userBtn"><span class="avatar" id="avatar">–</span><span class="who"><b id="userName">–</b><small id="userRole">–</small></span><i data-i="down" class="sm"></i></button>
+      </header>
+      <div class="demo-strip hidden" id="demoStrip"><b>DEMO</b> Hospitals, staff and figures are simulated. OTP is shown on screen because there is no SMS gateway in the prototype.</div>
+      <div class="dropdown hidden" id="userMenu" role="menu">
+        <p class="note" id="sessionNote"></p>
+        <button data-go="profile"><i data-i="user" class="sm"></i> Profile &amp; permissions</button>
+        <button data-go="settings"><i data-i="settings" class="sm"></i> Settings</button>
+        <button id="logoutBtn"><i data-i="logout" class="sm"></i> Log out</button>
+      </div>
+      <main class="page" id="view" aria-live="polite"></main>
+      <!-- Kept outside #view so the live console doesn't reload when the dashboard refreshes. -->
+      <div class="page cad-pane hidden" id="cadPane"></div>
+    </div>
+  </div>
+
+  <dialog class="modal" id="caseModal">
+    <div class="m-head"><h3 id="mTitle" style="margin:0">Referral</h3><button class="b sm ghost" data-close aria-label="Close"><i data-i="x" class="sm"></i></button></div>
+    <div class="m-body" id="mBody"></div>
+  </dialog>
+  <dialog class="modal" id="rerouteModal">
+    <form method="dialog" id="rerouteForm">
+      <div class="m-head"><h3 style="margin:0">🔁 Bed no longer available – re-route patient</h3><button class="b sm ghost" type="button" data-close aria-label="Close"><i data-i="x" class="sm"></i></button></div>
+      <div class="m-body">
+        <p class="small" id="rrCase"></p>
+        <p class="small muted">The reserved bed is released at once. Medreach asks the next capable hospital automatically and redirects the ambulance the moment one accepts – the ambulance keeps coming meanwhile. The family is told why.</p>
+        <fieldset class="rr-reasons">
+          <legend class="small"><b>Why can't you receive this patient now?</b></legend>
+          <label><input type="radio" name="reason" value="ICU bed taken by a critical walk-in patient" checked> ICU / emergency bed taken by a critical walk-in patient</label>
+          <label><input type="radio" name="reason" value="Equipment failure"> Equipment failure (ventilator, CT, cath lab…)</label>
+          <label><input type="radio" name="reason" value="Specialist unavailable"> Specialist / team not available</label>
+          <label><input type="radio" name="reason" value="Emergency department overloaded"> Emergency department overloaded</label>
+          <label><input type="radio" name="reason" value="other"> Other: <input type="text" name="other" maxlength="100" placeholder="short reason"></label>
+        </fieldset>
+        <div class="row" style="justify-content:flex-end;margin-top:.8rem">
+          <button class="b" type="button" data-close>Keep the patient</button>
+          <button class="b danger" type="submit" id="rrGo">🔁 Release bed &amp; re-route</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="/vendor/leaflet/leaflet.js"></script>
+  <script type="module" src="/js/hospital.js"></script>
+</body>
+</html>
